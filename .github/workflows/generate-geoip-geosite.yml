@@ -78,18 +78,15 @@ jobs:
         run: |
           ./generate-geoip-geosite -s torrents.json -i torrents -o torrents --gen-rule-set-srs
 
-      - name: Create rulesets directory
-        run: mkdir -p /home/runner/work/rulesets/rulesets
-      
       - name: Copy .srs files to repository directory
         run: |
-          cp ./adaway/*.srs /home/runner/work/rulesets/rulesets
-          cp ./torrents/*.srs /home/runner/work/rulesets/rulesets
-
+          cp ./adaway/*.srs /home/runner/work/RuRulesets/RuRulesets
+          cp ./torrents/*.srs /home/runner/work/RuRulesets/RuRulesets
+      
       - name: Commit and Push Changes
         uses: EndBug/add-and-commit@v9
         with:
-          add: '/home/runner/work/RuRulesets/RuRulesets/rulesets/*.srs'
+          add: '*.srs'
           author_name: GitHub Action
           author_email: githubaction@githubaction.com
           message: 'Update AdAway and Torrents Lists ${{ steps.date.outputs.date }}'
