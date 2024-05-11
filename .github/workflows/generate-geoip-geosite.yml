@@ -107,7 +107,7 @@ jobs:
           add: '*.srs'
           author_name: GitHub Action
           author_email: githubaction@githubaction.com
-          message: 'Update AdAway and Torrents Lists $DATE'
+          message: 'Update AdAway and Torrents Lists ${{ env.DATE }}'
           push: true
           cwd: .
           default_author: github_actor
