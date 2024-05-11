@@ -28,12 +28,10 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y curl wget git
-
       - name: Download generate-geoip-geosite
         run: |
           DOWNLOAD_URL=$(curl -s https://api.github.com/repos/Dunamis4tw/generate-geoip-geosite/releases/latest | grep "generate-geoip-geosite.*linux-amd64.tar.gz" | grep "browser_download_url" | cut -d '"' -f 4)
           wget "$DOWNLOAD_URL" || exit 1  # Exit if download fails
-
       - name: Extract generate-geoip-geosite
         run: |
           DOWNLOAD_URL=$(curl -s https://api.github.com/repos/Dunamis4tw/generate-geoip-geosite/releases/latest | grep "generate-geoip-geosite.*linux-amd64.tar.gz" | grep "browser_download_url" | cut -d '"' -f 4)
@@ -41,7 +39,6 @@ jobs:
           wget "$DOWNLOAD_URL"
           tar -xf "$ARCHIVE_NAME"
           rm "$ARCHIVE_NAME"
-
       - name: Create adaway_alive_hosts_mail_fb.json
         run: |
           cat << EOF > adaway_alive_hosts_mail_fb.json
@@ -53,7 +50,6 @@ jobs:
             }
           ]
           EOF
-
       - name: Create torrents.json
         run: |
           cat << EOF > torrents.json
@@ -70,19 +66,31 @@ jobs:
             }
           ]
           EOF
-
+      - name: Create Antifilter.Download community edition.json
+        run: |
+          cat << EOF > аntifilter_community_edition.json
+          [
+            {
+              "url": "https://community.antifilter.download/list/domains.lst",
+              "contentType": "DefaultList",
+              "category": "аntifilter_community_edition"
+            }
+          ]
+          EOF
       - name: Make generate-geoip-geosite executable
         run: chmod +x generate-geoip-geosite
 
       - name: Generate AdAway Lists
         run: |
           ./generate-geoip-geosite -s adaway_alive_hosts_mail_fb.json -i adaway -o adaway --gen-rule-set-srs
-
       - name: Generate Torrents Lists
         run: |
           ./generate-geoip-geosite -s torrents.json -i torrents -o torrents --gen-rule-set-srs
-
-      - name: Copy .srs files to repository directory
+	- name: Generate аntifilter_community_edition Lists
+        run: |
+          ./generate-geoip-geosite -s аntifilter_community_edition.json -i аntifilter -o аntifilter --gen-rule-set-srs
+      
+- name: Copy .srs files to repository directory
         run: |
           cp ./adaway/*.srs /home/runner/work/RuRulesets/RuRulesets
           cp ./torrents/*.srs /home/runner/work/RuRulesets/RuRulesets
