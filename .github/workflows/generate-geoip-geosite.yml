@@ -1,0 +1,97 @@
+name: Generate and Update AdAway/Torrents Lists
+
+on:
+  push:
+    branches: [ main ]
+  schedule:
+    - cron: '0 1 * * *'  # Weekly on Sundays (UTC)
+
+permissions:
+  contents: write
+jobs:
+  generate_lists:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js (if required)
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'  # Adjust if needed
+
+      - name: Install Dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y curl wget git
+
+      - name: Download generate-geoip-geosite
+        run: |
+          DOWNLOAD_URL=$(curl -s https://api.github.com/repos/Dunamis4tw/generate-geoip-geosite/releases/latest | grep "generate-geoip-geosite.*linux-amd64.tar.gz" | grep "browser_download_url" | cut -d '"' -f 4)
+          wget "$DOWNLOAD_URL"
+
+      - name: Extract generate-geoip-geosite
+        run: |
+          DOWNLOAD_URL=$(curl -s https://api.github.com/repos/Dunamis4tw/generate-geoip-geosite/releases/latest | grep "generate-geoip-geosite.*linux-amd64.tar.gz" | grep "browser_download_url" | cut -d '"' -f 4)
+          ARCHIVE_NAME=${DOWNLOAD_URL##*/}
+          wget "$DOWNLOAD_URL"
+          tar -xf "$ARCHIVE_NAME"
+          rm "$ARCHIVE_NAME"
+
+      - name: Create adaway_alive_hosts_mail_fb.json
+        run: |
+          cat << EOF > adaway_alive_hosts_mail_fb.json
+          [
+            {
+              "url": "https://schakal.ru/hosts/alive_hosts_mail_fb.txt",
+              "contentType": "HostsFile",
+              "category": "adaway_alive_hosts_mail_fb"
+            }
+          ]
+          EOF
+
+      - name: Create torrents.json
+        run: |
+          cat << EOF > torrents.json
+          [
+            {
+              "url": "https://raw.githubusercontent.com/im-sm/Pi-hole-Torrent-Blocklist/main/all-torrent-trackres.txt",
+              "contentType": "DefaultList",
+              "category": "torrent_trackres"
+            },
+            {
+              "url": "https://raw.githubusercontent.com/im-sm/Pi-hole-Torrent-Blocklist/main/all-torrent-websites.txt",
+              "contentType": "DefaultList",
+              "category": "torrent_websites"
+            }
+          ]
+          EOF
+
+      - name: Make generate-geoip-geosite executable
+        run: chmod +x generate-geoip-geosite
+
+      - name: Generate AdAway Lists
+        run: |
+          ./generate-geoip-geosite -s adaway_alive_hosts_mail_fb.json -i adaway -o adaway --gen-rule-set-srs
+
+      - name: Generate Torrents Lists
+        run: |
+          ./generate-geoip-geosite -s torrents.json -i torrents -o torrents --gen-rule-set-srs
+
+      - name: Copy .srs files to repository directory
+        run: |
+          cp ./adaway/*.srs /home/runner/work/rulesets/rulesets
+          cp ./torrents/*.srs /home/runner/work/rulesets/rulesets
+
+      - name: Commit and Push Changes
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: '["/home/runner/work/rulesets/rulesets/*.srs"]'
+          author_name: GitHub Action
+          author_email: githubaction@githubaction.com
+          message: 'Update AdAway and Torrents Lists ${{ steps.date.outputs.date }}'
+          push: true
+
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=date::$(TZ=Europe/Moscow date +'%Y-%m-%dT%H:%M:%S')"
