@@ -94,8 +94,8 @@ jobs:
         run: |
           cp ./adaway/*.srs /home/runner/work/RuRulesets/RuRulesets
           cp ./torrents/*.srs /home/runner/work/RuRulesets/RuRulesets
-	  cp ./аntifilter/*.srs /home/runner/work/RuRulesets/RuRulesets
-
+          cp ./аntifilter/*.srs /home/runner/work/RuRulesets/RuRulesets
+          
       - name: Get current date
         id: date
         run: |
