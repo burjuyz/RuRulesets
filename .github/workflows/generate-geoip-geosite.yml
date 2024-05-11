@@ -68,7 +68,7 @@ jobs:
           EOF
       - name: Create Antifilter.Download community edition.json
         run: |
-          cat << EOF > аntifilter_community_edition.json
+          cat << EOF > аntifilter.json
           [
             {
               "url": "https://community.antifilter.download/list/domains.lst",
@@ -88,7 +88,7 @@ jobs:
           ./generate-geoip-geosite -s torrents.json -i torrents -o torrents --gen-rule-set-srs
       - name: Generate аntifilter_community_edition Lists
         run: |
-          ./generate-geoip-geosite -s аntifilter_community_edition.json -i аntifilter -o аntifilter --gen-rule-set-srs
+          ./generate-geoip-geosite -s аntifilter.json -i аntifilter -o аntifilter --gen-rule-set-srs
       
       - name: Copy .srs files to repository directory
         run: |
