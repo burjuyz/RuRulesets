@@ -14,6 +14,9 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
+        
+      - name: Pull Changes
+        run: git pull
 
       - name: Set up Node.js (if required)
         uses: actions/setup-node@v3
