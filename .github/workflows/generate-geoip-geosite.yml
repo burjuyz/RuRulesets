@@ -98,7 +98,7 @@ jobs:
           default_author: github_actor
           fetch: --tags --force
           pathspec_error_handling: ignore
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.RULESET_TOKEN }}
 
       - name: Get current date
         id: date
