@@ -78,6 +78,9 @@ jobs:
         run: |
           ./generate-geoip-geosite -s torrents.json -i torrents -o torrents --gen-rule-set-srs
 
+      - name: Create rulesets directory
+        run: mkdir -p /home/runner/work/rulesets/rulesets
+      
       - name: Copy .srs files to repository directory
         run: |
           cp ./adaway/*.srs /home/runner/work/rulesets/rulesets
