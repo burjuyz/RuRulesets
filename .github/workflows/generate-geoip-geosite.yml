@@ -86,15 +86,16 @@ jobs:
       - name: Generate Torrents Lists
         run: |
           ./generate-geoip-geosite -s torrents.json -i torrents -o torrents --gen-rule-set-srs
-	- name: Generate аntifilter_community_edition Lists
+      - name: Generate аntifilter_community_edition Lists
         run: |
           ./generate-geoip-geosite -s аntifilter_community_edition.json -i аntifilter -o аntifilter --gen-rule-set-srs
       
-- name: Copy .srs files to repository directory
+      - name: Copy .srs files to repository directory
         run: |
           cp ./adaway/*.srs /home/runner/work/RuRulesets/RuRulesets
           cp ./torrents/*.srs /home/runner/work/RuRulesets/RuRulesets
-          
+	  cp ./аntifilter/*.srs /home/runner/work/RuRulesets/RuRulesets
+
       - name: Get current date
         id: date
         run: |
