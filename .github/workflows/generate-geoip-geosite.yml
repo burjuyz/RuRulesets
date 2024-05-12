@@ -111,6 +111,7 @@ jobs:
           mv ./adaway/*.srs /home/runner/work/RuRulesets/RuRulesets
           mv ./torrents/*.srs /home/runner/work/RuRulesets/RuRulesets
           mv ./antifilter/*.srs /home/runner/work/RuRulesets/RuRulesets
+          mv ./antizapret/*.srs /home/runner/work/RuRulesets/RuRulesets
           
       - name: Get current date
         id: date
