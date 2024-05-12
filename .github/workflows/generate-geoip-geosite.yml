@@ -37,69 +37,59 @@ jobs:
           rm "$ARCHIVE_NAME"
           chmod +x generate-geoip-geosite
 
-      - name: Create adaway_alive_hosts_mail_fb.json
+      - name: Создание временных файлов
         run: |
           cat << EOF > adaway_alive_hosts_mail_fb.json
           [
-            {
-              "url": "https://schakal.ru/hosts/alive_hosts_mail_fb.txt",
-              "contentType": "HostsFile",
-              "category": "adaway_alive_hosts_mail_fb"
-            }
+          {
+            "url": "https://schakal.ru/hosts/alive_hosts_mail_fb.txt",
+            "contentType": "HostsFile",
+            "category": "adaway_alive_hosts_mail_fb"
+          }
           ]
           EOF
-
-      - name: Create torrents.json
-        run: |
           cat << EOF > torrents.json
           [
-            {
-              "url": "https://raw.githubusercontent.com/im-sm/Pi-hole-Torrent-Blocklist/main/all-torrent-trackres.txt",
-              "contentType": "DefaultList",
-              "category": "torrent_trackres"
-            },
-            {
-              "url": "https://raw.githubusercontent.com/im-sm/Pi-hole-Torrent-Blocklist/main/all-torrent-websites.txt",
-              "contentType": "DefaultList",
-              "category": "torrent_websites"
-            }
+          {
+            "url": "https://raw.githubusercontent.com/im-sm/Pi-hole-Torrent-Blocklist/main/all-torrent-trackres.txt",
+            "contentType": "DefaultList",
+            "category": "torrent_trackres"
+          },
+          {
+            "url": "https://raw.githubusercontent.com/im-sm/Pi-hole-Torrent-Blocklist/main/all-torrent-websites.txt",
+            "contentType": "DefaultList",
+            "category": "torrent_websites"
+          }
           ]
           EOF
-
-      - name: Create Antifilter.Download community edition.json
-        run: |
-          cat << EOF > antifilter.json
+          cat << EOF > antizapret.json
           [
-            {
-              "url": "https://community.antifilter.download/list/domains.lst",
-              "contentType": "DefaultList",
-              "category": "antifilter_ce"
-            }
+          {
+            "url": "https://raw.githubusercontent.com/zapret-info/z-i/master/dump.csv",
+            "contentType": "CsvDumpAntizapret",
+            "category": "antizapret"
+          }
           ]
           EOF
-          
           cat << EOF > antifilter.json
           [
           {
             "url": "https://antifilter.download/list/allyouneed.lst",
             "contentType": "DefaultList",
             "category": "antifilter_allyouneed"
-          } 
+          }
+          ]
+          EOF
+          cat << EOF > antifilter_community.json
+          [
+          {
+            "url": "https://community.antifilter.download/list/domains.lst",
+            "contentType": "DefaultList",
+            "category": "antifilter_community"
+          }
           ]
           EOF
         
-      - name: Create antizapret.json
-        run: |
-          cat << EOF > antizapret.json
-          [
-            {
-            "url": "https://raw.githubusercontent.com/zapret-info/z-i/master/dump.csv",
-            "contentType": "CsvDumpAntizapret",
-            "category": "antizapret"
-            }
-          ]
-          EOF
-
       - name: Генерация AdAway списков
         run: |
           ./generate-geoip-geosite -s adaway_alive_hosts_mail_fb.json -i ./adaway -o ./adaway --gen-rule-set-srs
