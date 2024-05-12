@@ -25,7 +25,9 @@ https://github.com/burjuyz/RuRulesets/raw/main/ruleset-domain-torrent_websites.s
 
 https://github.com/burjuyz/RuRulesets/raw/main/ruleset-domain-torrent_trackres.srs
 
-https://github.com/burjuyz/RuRulesets/raw/main/ruleset-domain-antifilter_ce.srs
+https://github.com/burjuyz/RuRulesets/raw/main/ruleset-domain-antifilter_community.srs
+
+https://github.com/burjuyz/RuRulesets/raw/main/ruleset-ip-antifilter_allyouneed.srs
 ## Пример
 
 ```javascript
