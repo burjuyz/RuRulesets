@@ -1,6 +1,7 @@
 name: Generate and Update AdAway/Torrents Lists
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: '0 1 * * *'  # Weekly on Sundays (UTC)
 
