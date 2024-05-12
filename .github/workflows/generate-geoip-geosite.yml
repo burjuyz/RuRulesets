@@ -109,6 +109,7 @@ jobs:
         run: |
           rm -f /home/runner/work/RuRulesets/RuRulesets/*.srs
           rm -f /home/runner/work/RuRulesets/RuRulesets/*.json
+          rm -f /home/runner/work/RuRulesets/RuRulesets/generate-geoip-geosite
           mv ./adaway/*.srs /home/runner/work/RuRulesets/RuRulesets
           mv ./torrents/*.srs /home/runner/work/RuRulesets/RuRulesets
           mv ./antifilter/*.srs /home/runner/work/RuRulesets/RuRulesets
