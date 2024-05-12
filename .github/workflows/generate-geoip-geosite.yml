@@ -108,6 +108,7 @@ jobs:
       - name: Copy .srs files to repository directory
         run: |
           rm -f /home/runner/work/RuRulesets/RuRulesets/*.srs
+          rm -f /home/runner/work/RuRulesets/RuRulesets/*.json
           mv ./adaway/*.srs /home/runner/work/RuRulesets/RuRulesets
           mv ./torrents/*.srs /home/runner/work/RuRulesets/RuRulesets
           mv ./antifilter/*.srs /home/runner/work/RuRulesets/RuRulesets
