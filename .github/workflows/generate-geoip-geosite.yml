@@ -68,12 +68,12 @@ jobs:
 
       - name: Create Antifilter.Download community edition.json
         run: |
-          cat << EOF > аntifilter.json
+          cat << EOF > antifilter.json
           [
             {
               "url": "https://community.antifilter.download/list/domains.lst",
               "contentType": "DefaultList",
-              "category": "аntifilter_ce"
+              "category": "antifilter_ce"
             }
           ]
           EOF
@@ -91,14 +91,14 @@ jobs:
  
       - name: Generate аntifilter_community_edition Lists
         run: |
-          ./generate-geoip-geosite -s аntifilter.json -i аntifilter -o аntifilter --gen-rule-set-srs
+          ./generate-geoip-geosite -s antifilter.json -i аntifilter -o аntifilter --gen-rule-set-srs
       
       - name: Copy .srs files to repository directory
         run: |
           rm -f /home/runner/work/RuRulesets/RuRulesets/*.srs
           cp ./adaway/*.srs /home/runner/work/RuRulesets/RuRulesets
           cp ./torrents/*.srs /home/runner/work/RuRulesets/RuRulesets
-          cp ./аntifilter/*.srs /home/runner/work/RuRulesets/RuRulesets
+          cp ./antifilter/*.srs /home/runner/work/RuRulesets/RuRulesets
           
       - name: Get current date
         id: date
