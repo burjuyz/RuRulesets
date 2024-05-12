@@ -120,7 +120,6 @@ jobs:
       - name: Commit and Push Changes
         uses: EndBug/add-and-commit@v9
         with:
-          add: '*.srs'
           author_name: GitHub Action
           author_email: githubaction@githubaction.com
           message: 'Update Lists ${{ env.DATE }}'
