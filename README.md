@@ -11,7 +11,7 @@
 
 Списки блокировки всех известных трекеров собранных автором Sakib Mahmud [Github](https://github.com/SM443/Pi-hole-Torrent-Blocklist)  
 
-Списки заблокированных сайтов в РФ (community edition и allyouneed)[Antifilter Download](https://community.antifilter.download)
+Списки заблокированных сайтов в РФ (community edition и allyouneed) [Antifilter Download](https://community.antifilter.download)
 
 Списки заблокированных сайтов в РФ [Antizapret](https://github.com/zapret-info/z-i)
 
