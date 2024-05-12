@@ -1,4 +1,6 @@
+
 # RU rulesets for Sing-Box
+
 
 
 Атообновляемые списки адресов сконвертированные в формат ruleset которые могут применяться в приложениях с ядром Sing-Box выше 1.8.0
@@ -13,3 +15,27 @@
 
 
 Для генерации была использована библиотека от Dunamis4tw [Github](https://github.com/Dunamis4tw/generate-geoip-geosite)
+## Прямые ссылки
+
+добавьте в свой конфиг
+
+https://github.com/burjuyz/RuRulesets/raw/main/ruleset-domain-adaway_alive_hosts_mail_fb.srs
+
+https://github.com/burjuyz/RuRulesets/raw/main/ruleset-domain-torrent_websites.srs
+
+https://github.com/burjuyz/RuRulesets/raw/main/ruleset-domain-torrent_trackres.srs
+
+https://github.com/burjuyz/RuRulesets/raw/main/ruleset-domain-antifilter_ce.srs
+## Пример
+
+```javascript
+    {
+        "tag": "torrent_websites",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://github.com/burjuyz/RuRulesets/raw/main/ruleset-domain-torrent_websites.srs",
+        "download_detour": "direct",
+        "update_interval": "168h0m0s"
+      },
+```
+
