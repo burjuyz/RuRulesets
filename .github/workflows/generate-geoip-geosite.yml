@@ -1,13 +1,12 @@
 name: Generate and Update AdAway/Torrents Lists
 
 on:
-  push:
-    branches: [ main ]
   schedule:
     - cron: '0 1 * * *'  # Weekly on Sundays (UTC)
 
 permissions:
   contents: write
+
 jobs:
   generate_lists:
     runs-on: ubuntu-latest
@@ -36,6 +35,7 @@ jobs:
           wget "$DOWNLOAD_URL"
           tar -xf "$ARCHIVE_NAME"
           rm "$ARCHIVE_NAME"
+          chmod +x generate-geoip-geosite
 
       - name: Create adaway_alive_hosts_mail_fb.json
         run: |
@@ -77,28 +77,49 @@ jobs:
             }
           ]
           EOF
+          
+          cat << EOF > antifilter.json
+          [
+          {
+            "url": "https://antifilter.download/list/allyouneed.lst",
+            "contentType": "DefaultList",
+            "category": "antifilter_allyouneed"
+          } 
+          ]
+          EOF
+        
+      - name: Create antizapret.json
+        run: |
+          cat << EOF > antizapret.json
+          [
+            {
+            "url": "https://raw.githubusercontent.com/zapret-info/z-i/master/dump.csv",
+            "contentType": "CsvDumpAntizapret",
+            "category": "antizapret"
+            }
+          ]
+          EOF
 
-      - name: Make generate-geoip-geosite executable
-        run: chmod +x generate-geoip-geosite
-
-      - name: Generate AdAway Lists
+      - name: Генерация AdAway списков
         run: |
-          ./generate-geoip-geosite -s adaway_alive_hosts_mail_fb.json -i adaway -o adaway --gen-rule-set-srs
- 
-      - name: Generate Torrents Lists
+          ./generate-geoip-geosite -s adaway_alive_hosts_mail_fb.json -i ./adaway -o ./adaway --gen-rule-set-srs
+      - name: Генерация Torrents списков
         run: |
-          ./generate-geoip-geosite -s torrents.json -i torrents -o torrents --gen-rule-set-srs
- 
-      - name: Generate аntifilter_community_edition Lists
+          ./generate-geoip-geosite -s torrents.json -i ./torrents -o ./torrents --gen-rule-set-srs
+      - name: Генерация AntiZapret списков
         run: |
-          ./generate-geoip-geosite -s antifilter.json -i antifilter -o antifilter --gen-rule-set-srs
+          ./generate-geoip-geosite -s antizapret.json -i ./antizapret -o ./antizapret --gen-rule-set-srs
+      - name: Генерация AntiFilter списков
+        run: |
+          ./generate-geoip-geosite -s antifilter.json -i ./antifilter -o ./antifilter --gen-rule-set-srs
+          ./generate-geoip-geosite -s antifilter_community.json -i ./antifilter -o ./antifilter --gen-rule-set-srs
       
       - name: Copy .srs files to repository directory
         run: |
           rm -f /home/runner/work/RuRulesets/RuRulesets/*.srs
-          cp ./adaway/*.srs /home/runner/work/RuRulesets/RuRulesets
-          cp ./torrents/*.srs /home/runner/work/RuRulesets/RuRulesets
-          cp ./antifilter/*.srs /home/runner/work/RuRulesets/RuRulesets
+          mv ./adaway/*.srs /home/runner/work/RuRulesets/RuRulesets
+          mv ./torrents/*.srs /home/runner/work/RuRulesets/RuRulesets
+          mv ./antifilter/*.srs /home/runner/work/RuRulesets/RuRulesets
           
       - name: Get current date
         id: date
