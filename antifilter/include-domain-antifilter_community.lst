@@ -128,7 +128,6 @@ hd.zetfix.online
 helm.releases.hashicorp.com
 holod.global.ssl.fastly.net
 holod.media
-hub.docker.com
 hyperhost.ua
 ichef.bbci.co.uk
 iichan.hk
@@ -234,7 +233,6 @@ redis.com
 redtube.com
 refactoring.guru
 refinitiv.com
-registry.hub.docker.com
 registry.terraform.io
 releases.hashicorp.com
 repo.mongodb.org
