@@ -1,4 +1,4 @@
-name: Generate and Update AdAway/Torrents Lists
+name: Generate and Update AdAway/Torrents/OISD Lists
 
 on:
   schedule:
@@ -19,7 +19,6 @@ jobs:
 
       - name: Set up Node.js (if required)
         uses: actions/setup-node@v4
-        
         with:
           node-version: '20'  # Adjust if needed
 
@@ -89,6 +88,25 @@ jobs:
           }
           ]
           EOF
+          cat << EOF > oisd.json
+          [
+          {
+            "url": "https://small.oisd.nl/domainswild2",
+            "contentType": "DefaultList",
+            "category": "oisd_small"
+          },
+          {
+            "url": "https://big.oisd.nl/domainswild2",
+            "contentType": "DefaultList",
+            "category": "oisd_big"
+          },
+          {
+            "url": "https://nsfw.oisd.nl/domainswild2",
+            "contentType": "DefaultList",
+            "category": "oisd_nsfw"
+          }
+          ]
+          EOF
         
       - name: Генерация AdAway списков
         run: |
@@ -103,6 +121,9 @@ jobs:
         run: |
           ./generate-geoip-geosite -s antifilter.json -i ./antifilter -o ./antifilter --gen-rule-set-srs
           ./generate-geoip-geosite -s antifilter_community.json -i ./antifilter -o ./antifilter --gen-rule-set-srs
+      - name: Генерация OISD списков
+        run: |
+          ./generate-geoip-geosite -s oisd.json -i ./oisd -o ./oisd --gen-rule-set-srs
       
       - name: Copy .srs files to repository directory
         run: |
@@ -113,6 +134,7 @@ jobs:
           mv ./torrents/*.srs /home/runner/work/RuRulesets/RuRulesets
           mv ./antifilter/*.srs /home/runner/work/RuRulesets/RuRulesets
           mv ./antizapret/*.srs /home/runner/work/RuRulesets/RuRulesets
+          mv ./oisd/*.srs /home/runner/work/RuRulesets/RuRulesets
           
       - name: Get current date
         id: date
