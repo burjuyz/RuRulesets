@@ -43,6 +43,13 @@ https://github.com/burjuyz/RuRulesets/raw/main/ruleset-ip-antifilter_allyouneed.
 https://github.com/burjuyz/RuRulesets/raw/main/ruleset-ip-antizapret.srs
 
 https://github.com/burjuyz/RuRulesets/raw/main/ruleset-domain-antizapret.srs
+
+https://github.com/burjuyz/RuRulesets/raw/ruleset-domain-oisd_small.srs
+
+https://github.com/burjuyz/RuRulesets/raw/ruleset-domain-oisd_big.srs
+
+https://github.com/burjuyz/RuRulesets/raw/ruleset-domain-oisd_nsfw.srs
+
 ## Пример
 
 ```javascript
