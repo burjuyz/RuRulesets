@@ -3,7 +3,8 @@ name: Generate and Update AdAway/Torrents/OISD Lists
 on:
   schedule:
     - cron: '0 */72 * * *'  # Every three days
-
+  workflow_dispatch:
+  
 permissions:
   contents: write
 
