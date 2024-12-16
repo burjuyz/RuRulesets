@@ -38,8 +38,6 @@ https://github.com/burjuyz/RuRulesets/raw/main/ruleset-domain-antifilter_communi
 
 https://github.com/burjuyz/RuRulesets/raw/main/ruleset-ip-antifilter_allyouneed.srs
 
-https://github.com/burjuyz/RuRulesets/raw/main/ruleset-ip-antizapret.srs
-
 https://github.com/burjuyz/RuRulesets/raw/main/ruleset-domain-oisd_small.srs
 
 https://github.com/burjuyz/RuRulesets/raw/main/ruleset-domain-oisd_big.srs
