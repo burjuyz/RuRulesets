@@ -4,7 +4,7 @@ on:
   schedule:
     - cron: '0 */72 * * *'  # Every three days
   workflow_dispatch:
-  
+
 permissions:
   contents: write
 
@@ -62,15 +62,6 @@ jobs:
           }
           ]
           EOF
-          cat << EOF > antizapret.json
-          [
-          {
-            "url": "https://raw.githubusercontent.com/zapret-info/z-i/master/dump.csv",
-            "contentType": "CsvDumpAntizapret",
-            "category": "antizapret"
-          }
-          ]
-          EOF
           cat << EOF > antifilter.json
           [
           {
@@ -108,16 +99,13 @@ jobs:
           }
           ]
           EOF
-        
+
       - name: Генерация AdAway списков
         run: |
           ./generate-geoip-geosite -s adaway_alive_hosts_mail_fb.json -i ./adaway -o ./adaway --gen-rule-set-srs
       - name: Генерация Torrents списков
         run: |
           ./generate-geoip-geosite -s torrents.json -i ./torrents -o ./torrents --gen-rule-set-srs
-      - name: Генерация AntiZapret списков
-        run: |
-          ./generate-geoip-geosite -s antizapret.json -i ./antizapret -o ./antizapret --gen-rule-set-srs
       - name: Генерация AntiFilter списков
         run: |
           ./generate-geoip-geosite -s antifilter.json -i ./antifilter -o ./antifilter --gen-rule-set-srs
@@ -125,7 +113,7 @@ jobs:
       - name: Генерация OISD списков
         run: |
           ./generate-geoip-geosite -s oisd.json -i ./oisd -o ./oisd --gen-rule-set-srs
-      
+
       - name: Copy .srs files to repository directory
         run: |
           rm -f /home/runner/work/RuRulesets/RuRulesets/*.srs
@@ -134,7 +122,6 @@ jobs:
           mv ./adaway/*.srs /home/runner/work/RuRulesets/RuRulesets
           mv ./torrents/*.srs /home/runner/work/RuRulesets/RuRulesets
           mv ./antifilter/*.srs /home/runner/work/RuRulesets/RuRulesets
-          mv ./antizapret/*.srs /home/runner/work/RuRulesets/RuRulesets
           mv ./oisd/*.srs /home/runner/work/RuRulesets/RuRulesets
           
       - name: Get current date
