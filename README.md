@@ -13,8 +13,6 @@
 
 Списки заблокированных сайтов в РФ (community edition и allyouneed) [Antifilter Download](https://community.antifilter.download)
 
-Списки заблокированных сайтов в РФ [Antizapret](https://github.com/zapret-info/z-i)
-
 Списки популярных блокировщиков рекламы ориентированных на запад собранных автором Stephan van Ruth [oisd](https://oisd.nl/setup) 
 oisd имеет 3 разных списка;
 
@@ -41,8 +39,6 @@ https://github.com/burjuyz/RuRulesets/raw/main/ruleset-domain-antifilter_communi
 https://github.com/burjuyz/RuRulesets/raw/main/ruleset-ip-antifilter_allyouneed.srs
 
 https://github.com/burjuyz/RuRulesets/raw/main/ruleset-ip-antizapret.srs
-
-https://github.com/burjuyz/RuRulesets/raw/main/ruleset-domain-antizapret.srs
 
 https://github.com/burjuyz/RuRulesets/raw/main/ruleset-domain-oisd_small.srs
 
