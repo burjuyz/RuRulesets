@@ -51,12 +51,12 @@ jobs:
           cat << EOF > torrents.json
           [
           {
-            "url": "https://raw.githubusercontent.com/im-sm/Pi-hole-Torrent-Blocklist/main/all-torrent-trackres.txt",
+            "url": "https://raw.githubusercontent.com/sakib-m/Pi-hole-Torrent-Blocklist/main/all-torrent-trackers.txt",
             "contentType": "DefaultList",
             "category": "torrent_trackres"
           },
           {
-            "url": "https://raw.githubusercontent.com/im-sm/Pi-hole-Torrent-Blocklist/main/all-torrent-websites.txt",
+            "url": "https://raw.githubusercontent.com/sakib-m/Pi-hole-Torrent-Blocklist/main/all-torrent-websites.txt",
             "contentType": "DefaultList",
             "category": "torrent_websites"
           }
