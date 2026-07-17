@@ -2,7 +2,8 @@ name: Generate and Update AdAway/Torrents/OISD Lists
 
 on:
   schedule:
-    - cron: '0 */72 * * *'  # Every three days
+    # Каждые 3 дня в 00:00 UTC
+    - cron: '0 0 */3 * *'
   workflow_dispatch:
 
 permissions:
@@ -11,133 +12,219 @@ permissions:
 jobs:
   generate_lists:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-        
-      - name: Pull Changes
-        run: git pull
+        with:
+          fetch-depth: 0
 
-      - name: Set up Node.js (if required)
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'  # Adjust if needed
+          node-version: "24"
 
-      - name: Install Dependencies
+      - name: Install dependencies
         run: |
-          sudo apt update
-          sudo apt install -y curl wget git
+          sudo apt-get update
+          sudo apt-get install -y curl wget jq git
 
-      - name: Download and Extract generate-geoip-geosite
+      - name: Download generate-geoip-geosite
         run: |
-          DOWNLOAD_URL=$(curl -s https://api.github.com/repos/Dunamis4tw/generate-geoip-geosite/releases/latest | grep "generate-geoip-geosite.*linux-amd64.tar.gz" | grep "browser_download_url" | cut -d '"' -f 4)
-          ARCHIVE_NAME=${DOWNLOAD_URL##*/}
-          wget "$DOWNLOAD_URL"
-          tar -xf "$ARCHIVE_NAME"
-          rm "$ARCHIVE_NAME"
+          set -euo pipefail
+
+          RELEASE_JSON=$(curl -fsSL --retry 5 --retry-delay 10 \
+            https://api.github.com/repos/Dunamis4tw/generate-geoip-geosite/releases/latest)
+
+          DOWNLOAD_URL=$(echo "$RELEASE_JSON" | jq -r '.assets[] | select(.name | test("linux-amd64.tar.gz$")) | .browser_download_url')
+
+          if [ -z "$DOWNLOAD_URL" ] || [ "$DOWNLOAD_URL" = "null" ]; then
+            echo "Cannot find linux-amd64 release."
+            exit 1
+          fi
+
+          wget \
+            --tries=5 \
+            --waitretry=15 \
+            --timeout=30 \
+            --retry-connrefused \
+            "$DOWNLOAD_URL" \
+            -O generate.tar.gz
+
+          tar -xf generate.tar.gz
+
           chmod +x generate-geoip-geosite
 
-      - name: Создание временных файлов
+          rm generate.tar.gz
+
+      - name: Create source json files
         run: |
-          cat << EOF > adaway_alive_hosts_mail_fb.json
+          cat > adaway_alive_hosts_mail_fb.json << EOF
           [
-          {
-            "url": "https://schakal.ru/hosts/alive_hosts_mail_fb.txt",
-            "contentType": "HostsFile",
-            "category": "adaway_alive_hosts_mail_fb"
-          }
-          ]
-          EOF
-          cat << EOF > torrents.json
-          [
-          {
-            "url": "https://raw.githubusercontent.com/sakib-m/Pi-hole-Torrent-Blocklist/main/all-torrent-trackers.txt",
-            "contentType": "DefaultList",
-            "category": "torrent_trackres"
-          },
-          {
-            "url": "https://raw.githubusercontent.com/sakib-m/Pi-hole-Torrent-Blocklist/main/all-torrent-websites.txt",
-            "contentType": "DefaultList",
-            "category": "torrent_websites"
-          }
-          ]
-          EOF
-          cat << EOF > antifilter.json
-          [
-          {
-            "url": "https://antifilter.download/list/allyouneed.lst",
-            "contentType": "DefaultList",
-            "category": "antifilter_allyouneed"
-          }
-          ]
-          EOF
-          cat << EOF > antifilter_community.json
-          [
-          {
-            "url": "https://community.antifilter.download/list/domains.lst",
-            "contentType": "DefaultList",
-            "category": "antifilter_community"
-          }
-          ]
-          EOF
-          cat << EOF > oisd.json
-          [
-          {
-            "url": "https://small.oisd.nl/domainswild2",
-            "contentType": "DefaultList",
-            "category": "oisd_small"
-          },
-          {
-            "url": "https://big.oisd.nl/domainswild2",
-            "contentType": "DefaultList",
-            "category": "oisd_big"
-          },
-          {
-            "url": "https://nsfw.oisd.nl/domainswild2",
-            "contentType": "DefaultList",
-            "category": "oisd_nsfw"
-          }
+            {
+              "url":"https://schakal.ru/hosts/alive_hosts_mail_fb.txt",
+              "contentType":"HostsFile",
+              "category":"adaway_alive_hosts_mail_fb"
+            }
           ]
           EOF
 
-      - name: Генерация AdAway списков
-        run: |
-          ./generate-geoip-geosite -s adaway_alive_hosts_mail_fb.json -i ./adaway -o ./adaway --gen-rule-set-srs
-      - name: Генерация Torrents списков
-        run: |
-          ./generate-geoip-geosite -s torrents.json -i ./torrents -o ./torrents --gen-rule-set-srs
-      - name: Генерация AntiFilter списков
-        run: |
-          ./generate-geoip-geosite -s antifilter.json -i ./antifilter -o ./antifilter --gen-rule-set-srs
-          ./generate-geoip-geosite -s antifilter_community.json -i ./antifilter -o ./antifilter --gen-rule-set-srs
-      - name: Генерация OISD списков
-        run: |
-          ./generate-geoip-geosite -s oisd.json -i ./oisd -o ./oisd --gen-rule-set-srs
+          cat > torrents.json << EOF
+          [
+            {
+              "url":"https://raw.githubusercontent.com/sakib-m/Pi-hole-Torrent-Blocklist/main/all-torrent-trackers.txt",
+              "contentType":"DefaultList",
+              "category":"torrent_trackres"
+            },
+            {
+              "url":"https://raw.githubusercontent.com/sakib-m/Pi-hole-Torrent-Blocklist/main/all-torrent-websites.txt",
+              "contentType":"DefaultList",
+              "category":"torrent_websites"
+            }
+          ]
+          EOF
 
-      - name: Copy .srs files to repository directory
+          cat > antifilter.json << EOF
+          [
+            {
+              "url":"https://antifilter.download/list/allyouneed.lst",
+              "contentType":"DefaultList",
+              "category":"antifilter_allyouneed"
+            }
+          ]
+          EOF
+
+          cat > antifilter_community.json << EOF
+          [
+            {
+              "url":"https://community.antifilter.download/list/domains.lst",
+              "contentType":"DefaultList",
+              "category":"antifilter_community"
+            }
+          ]
+          EOF
+
+          cat > oisd.json << EOF
+          [
+            {
+              "url":"https://small.oisd.nl/domainswild2",
+              "contentType":"DefaultList",
+              "category":"oisd_small"
+            },
+            {
+              "url":"https://big.oisd.nl/domainswild2",
+              "contentType":"DefaultList",
+              "category":"oisd_big"
+            },
+            {
+              "url":"https://nsfw.oisd.nl/domainswild2",
+              "contentType":"DefaultList",
+              "category":"oisd_nsfw"
+            }
+          ]
+          EOF
+
+      - name: Generate rule-sets
+        shell: bash
         run: |
-          rm -f /home/runner/work/RuRulesets/RuRulesets/*.srs
-          rm -f /home/runner/work/RuRulesets/RuRulesets/*.json
-          rm -f /home/runner/work/RuRulesets/RuRulesets/generate-geoip-geosite
-          mv ./adaway/*.srs /home/runner/work/RuRulesets/RuRulesets
-          mv ./torrents/*.srs /home/runner/work/RuRulesets/RuRulesets
-          mv ./antifilter/*.srs /home/runner/work/RuRulesets/RuRulesets
-          mv ./oisd/*.srs /home/runner/work/RuRulesets/RuRulesets
-          
+          set -euo pipefail
+
+          generate_with_retry() {
+
+            local NAME="$1"
+            shift
+
+            for attempt in {1..5}; do
+
+              echo ""
+              echo "=============================================="
+              echo "$NAME"
+              echo "Attempt $attempt of 5"
+              echo "=============================================="
+
+              if "$@"; then
+                echo "$NAME completed successfully."
+                return 0
+              fi
+
+              if [ "$attempt" -lt 5 ]; then
+                echo "Retry after 30 seconds..."
+                sleep 30
+              fi
+
+            done
+
+            echo "$NAME failed after 5 attempts."
+            exit 1
+          }
+
+          mkdir -p adaway torrents antifilter oisd
+
+          generate_with_retry \
+            "AdAway" \
+            ./generate-geoip-geosite \
+            -s adaway_alive_hosts_mail_fb.json \
+            -i ./adaway \
+            -o ./adaway \
+            --gen-rule-set-srs
+
+          generate_with_retry \
+            "Torrents" \
+            ./generate-geoip-geosite \
+            -s torrents.json \
+            -i ./torrents \
+            -o ./torrents \
+            --gen-rule-set-srs
+
+          generate_with_retry \
+            "AntiFilter" \
+            ./generate-geoip-geosite \
+            -s antifilter.json \
+            -i ./antifilter \
+            -o ./antifilter \
+            --gen-rule-set-srs
+
+          generate_with_retry \
+            "AntiFilter Community" \
+            ./generate-geoip-geosite \
+            -s antifilter_community.json \
+            -i ./antifilter \
+            -o ./antifilter \
+            --gen-rule-set-srs
+
+          generate_with_retry \
+            "OISD" \
+            ./generate-geoip-geosite \
+            -s oisd.json \
+            -i ./oisd \
+            -o ./oisd \
+            --gen-rule-set-srs
+
+      - name: Copy generated files
+        run: |
+          set -e
+
+          rm -f ./*.srs
+          rm -f ./*.json
+          rm -f ./generate-geoip-geosite
+
+          find ./adaway -name "*.srs" -exec cp {} . \;
+          find ./torrents -name "*.srs" -exec cp {} . \;
+          find ./antifilter -name "*.srs" -exec cp {} . \;
+          find ./oisd -name "*.srs" -exec cp {} . \;
+
       - name: Get current date
-        id: date
         run: |
           echo "DATE=$(TZ=Europe/Moscow date +'%Y-%m-%dT%H:%M:%S')" >> $GITHUB_ENV
-      
-      - name: Commit and Push Changes
+
+      - name: Commit changes
         uses: EndBug/add-and-commit@v9
         with:
           author_name: GitHub Action
           author_email: githubaction@githubaction.com
-          message: 'Update Lists ${{ env.DATE }}'
+          message: "Update Lists ${{ env.DATE }}"
           push: true
-          cwd: .
+          github_token: ${{ secrets.RULESET_TOKEN }}
           default_author: github_actor
           fetch: --tags --force
           pathspec_error_handling: ignore
-          github_token: ${{ secrets.RULESET_TOKEN }}
